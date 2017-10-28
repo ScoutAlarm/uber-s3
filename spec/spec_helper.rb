@@ -43,6 +43,7 @@ def spec(client, &block)
   when 'UberS3::Connection::NetHttp'
     block.call(client)
   when 'UberS3::Connection::EmHttpFibered'
+    puts 'running fiber'
     EM.run do
       Fiber.new { block.call(client); EM.stop }.resume
     end

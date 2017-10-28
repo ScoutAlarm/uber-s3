@@ -8,6 +8,8 @@ rescue LoadError => e
   exit!
 end
 
+require 'yaml'
+
 $:.unshift(File.dirname(__FILE__))
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 UBERS3_ROOT = File.expand_path('../../', __FILE__)
@@ -79,7 +81,7 @@ Benchmark.bm do |bm|
   #     Fiber.new {
   #       # EM.add_periodic_timer(1) { $stderr.puts "hi" }
   #       save_object_bm.call(s3[:em_http_fibered])
-  #     
+  #
   #       EM.stop
   #     }.resume
   #   end

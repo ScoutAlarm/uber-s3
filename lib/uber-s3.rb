@@ -7,14 +7,15 @@ require 'digest/md5'
 require 'zlib'
 require 'stringio'
 require 'mime/types'
+require 'eventmachine'
 
 class UberS3
   extend Forwardable
-  
+
   attr_reader :connection
   attr_accessor :bucket, :options
   def_delegators :@bucket, :store, :set, :object, :get, :head, :[], :exists?, :objects
-  
+
   def initialize(options={})
     self.options = options
     self.bucket  = options[:bucket]
@@ -27,7 +28,7 @@ class UberS3
   def connection
     Thread.current['[uber-s3]:connection'] ||= Connection.open(self, options)
   end
-  
+
   def bucket=(bucket)
     @bucket = bucket.is_a?(String) ? Bucket.new(self, bucket) : bucket
   end

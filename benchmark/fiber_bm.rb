@@ -8,6 +8,8 @@ rescue LoadError => e
   exit!
 end
 
+require 'yaml'
+
 $:.unshift(File.dirname(__FILE__))
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 UBERS3_ROOT = File.expand_path('../../', __FILE__)
@@ -19,10 +21,11 @@ SETTINGS = YAML.load(File.read("#{UBERS3_ROOT}/spec/config/settings.yml"))['test
 # end
 
 require 'uber-s3'
+# require 'eventmachine'
 require 'benchmark'
 
 NUM_FILES  = 100
-DATA_SIZE  = 1024 # in bytes
+DATA_SIZE  = 1048 # in bytes
 
 
 NUM_FIBERS = 10
@@ -48,7 +51,7 @@ data = (1..DATA_SIZE).map{|i| ('a'..'z').to_a[rand(26)]}.join
 # Saving objects
 save_object_bm = Proc.new do |client,async|
   @processed = 0
-  
+
   files.each do |filename|
     work = Proc.new do
       # $stderr.puts "START => #{filename}"
@@ -58,7 +61,7 @@ save_object_bm = Proc.new do |client,async|
       @processed += 1
       EM.stop if async && @processed == NUM_FILES
     end
-    
+
     if async
       @fiber_pool.spawn(&work)
       # Fiber.new { work.call }.resume
@@ -86,10 +89,9 @@ end
 ## Let's run this thing -------------------------------------------------------
 
 Benchmark.bm do |bm|
-  # bm.report("saving #{NUM_FILES}x#{DATA_SIZE} byte objects (net-http) ") do
-  #   save_object_bm.call(s3[:net_http], false)
-  # end
-
+  bm.report("saving #{NUM_FILES}x#{DATA_SIZE} byte objects (net-http) ") do
+    save_object_bm.call(s3[:net_http], false)
+  end
   bm.report("saving #{NUM_FILES}x#{DATA_SIZE} byte objects (em-http-fibered) ") do
     EM.run do
       save_object_bm.call(s3[:em_http_fibered], true)
