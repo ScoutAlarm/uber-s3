@@ -21,6 +21,7 @@ end
 
 require 'uber-s3'
 require 'rspec'
+require 'yaml'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
@@ -29,7 +30,7 @@ require 'rspec'
 SETTINGS = YAML.load(File.read("#{SPEC_ROOT}/config/settings.yml"))['test']
 
 RSpec.configure do |config|
-  config.mock_with :rspec  
+  config.mock_with :rspec
 end
 
 ###
@@ -37,7 +38,7 @@ end
 # Helper method to run specs against multiple adapters
 def spec(client, &block)
   # TODO: eventually refactor this or find a better pattern
-  
+
   case client.connection.class.to_s
   when 'UberS3::Connection::NetHttp'
     block.call(client)
