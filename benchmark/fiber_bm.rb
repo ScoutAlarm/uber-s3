@@ -25,7 +25,7 @@ require 'uber-s3'
 require 'benchmark'
 
 NUM_FILES  = 100
-DATA_SIZE  = 1048 # in bytes
+DATA_SIZE  = 512000 # in bytes
 
 
 NUM_FIBERS = 10

@@ -7,7 +7,6 @@ require 'digest/md5'
 require 'zlib'
 require 'stringio'
 require 'mime/types'
-require 'eventmachine'
 
 class UberS3
   extend Forwardable
